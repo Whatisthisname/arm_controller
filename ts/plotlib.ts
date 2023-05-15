@@ -28,62 +28,6 @@ type PlotOptions = {
   colorMap: (value: number) => Color;
 };
 
-function plot2DFunctionToHeatmap(
-  canvas: HTMLCanvasElement,
-  func: (x: number, y: number) => number,
-  options: PlotOptions
-): void {
-
-
-  const all_data = Array<number>(canvas.width * canvas.height * 4);
-
-  let min = Infinity;
-  let max = -Infinity;
-
-  const xRange = options.xMax - options.xMin;
-  const yRange = options.yMax - options.yMin;
-  for (let j = 0; j < canvas.height; j++) {
-    for (let i = 0; i < canvas.width; i++) {
-      const x = options.xMin + (i / canvas.width) * xRange;
-      const y = options.yMax - (j / canvas.height) * yRange;
-
-      const value = func(x, y);
-      all_data[i + j * canvas.width] = value;
-      min = Math.min(min, value);
-      max = Math.max(max, value);
-    }
-  }
-
-  const span = max - min;
-
-  
-
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
-  const imageData = ctx.createImageData(canvas.width, canvas.height);
-  const data = imageData.data;
-
-  for (let j = 0; j < canvas.height; j++) {
-    for (let i = 0; i < canvas.width; i++) {
-      let color = [0,0,0]
-      const normalized_data = (all_data[i + j * canvas.width] - min) / span;
-      if (false) { // level sets
-        color = options.colorMap(0.5*(Math.sin(normalized_data * 2*Math.PI * 10) + 1));
-      } else {
-        color = options.colorMap(normalized_data)
-      }
-      
-      const index = (j * options.width_res + i) * 4;
-      const [r, g, b] = color;
-      data[index + 0] = r;
-      data[index + 1] = g;
-      data[index + 2] = b;
-      data[index + 3] = 255;
-    }
-  }
-
-  ctx.putImageData(imageData, 0, 0);
-}
-
 
 class coordinateSystem {
   canvas: HTMLCanvasElement;
@@ -174,16 +118,54 @@ class coordinateSystem {
     return new v2(x, y);
   }
 
-  heatmap(func: (x: number, y: number) => number, colorMap: (value: number) => Color) {
-    plot2DFunctionToHeatmap(this.canvas, func, {
-      width_res: this.canvas.width,
-      height_res: this.canvas.height,
-      xMin: this.xMin,
-      xMax: this.xMax,
-      yMin: this.yMin,
-      yMax: this.yMax,
-      colorMap: colorMap,
-    });
+  heatmap(func: (x: number, y: number) => number, colorMap: (value: number) => Color, level_set: boolean) {
+
+
+    const all_data = Array<number>(this.canvas.width * this.canvas.height * 4);
+
+    let min = Infinity;
+    let max = -Infinity;
+
+    const xRange = this.xMax - this.xMin;
+    const yRange = this.yMax - this.yMin;
+    for (let j = 0; j < this.canvas.height; j++) {
+      for (let i = 0; i < this.canvas.width; i++) {
+        const x = this.xMin + (i / this.canvas.width) * xRange;
+        const y = this.yMax - (j / this.canvas.height) * yRange;
+
+        const value = func(x, y);
+        all_data[i + j * this.canvas.width] = value;
+        min = Math.min(min, value);
+        max = Math.max(max, value);
+      }
+    }
+
+    const span = max - min;
+
+    const imageData = this.ctx.createImageData(this.canvas.width, this.canvas.height);
+    const data = imageData.data;
+
+    for (let j = 0; j < this.canvas.height; j++) {
+      for (let i = 0; i < this.canvas.width; i++) {
+        let color = [0, 0, 0]
+        const normalized_data = (all_data[i + j * this.canvas.width] - min) / span;
+        if (level_set) {
+          color = colorMap((0.5 * (Math.sin(normalized_data * 2 * Math.PI * 10) + 1))**2);
+        } else {
+          color = colorMap(normalized_data)
+        }
+
+        const index = (j * this.canvas.width + i) * 4;
+        const [r, g, b] = color;
+        data[index + 0] = r;
+        data[index + 1] = g;
+        data[index + 2] = b;
+        data[index + 3] = 255;
+      }
+    }
+
+    this.ctx.putImageData(imageData, 0, 0);
+
   }
 
 }

@@ -6,16 +6,22 @@
 </head>
 
 <body>
-  <canvas id="arm_canvas"></canvas>
-  <canvas id="loss_canvas"></canvas>
-  <select id="select_loss">
-    <option value="L2 squared">L2 squared</option>
-    <option value="L2">L2</option>
-    <option value="L1 squared">L1 squared</option>
-    <option value="L1">L1</option>
-  </select>
-  
   <p>Steer target with WASD and nudge configuration with arrow keys</p>
+  <div>
+    <canvas id="arm_canvas"></canvas>
+  </div>
+  <div>
+    <canvas id="loss_canvas"></canvas>
+    <select id="select_loss">
+      <option value="L2 squared">L2 squared</option>
+      <option value="L2">L2</option>
+      <option value="L1 squared">L1 squared</option>
+      <option value="L1">L1</option>
+    </select>
+    <input type="checkbox" id="toggle_level_set">
+    <label for="toggle_level_set">level sets</label>
+  </div>
+
   <script src="./dist/utils.js"></script>
   <script src="./dist/v2.js"></script>
   <script src="./dist/plotlib.js"></script>

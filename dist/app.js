@@ -2,6 +2,7 @@
 var arm_canvas = document.getElementById('arm_canvas');
 var loss_canvas = document.getElementById('loss_canvas');
 var dropdown = document.getElementById('select_loss');
+var toggle_level_set = document.getElementById('toggle_level_set');
 var map = linearColorMap([255, 0, 0], [0, 0, 255], -10, 10);
 arm_canvas.width = 300;
 arm_canvas.height = 300;
@@ -83,8 +84,8 @@ function update() {
     arm_coord.ctx.clearRect(0, 0, arm_canvas.width, arm_canvas.height);
     loss_coord.ctx.clearRect(0, 0, loss_canvas.width, loss_canvas.height);
     arm_coord.addAxes();
-    loss_coord.heatmap(angles_2_to_loss, matplotlib_cmap);
-    loss_coord.addAxes();
+    loss_coord.heatmap(angles_2_to_loss, matplotlib_cmap, toggle_level_set.checked);
+    // loss_coord.addAxes()
     loss_coord.circle(new v2(mod(arm.segments[0].angle, (2 * Math.PI)), mod(arm.segments[1].angle, (2 * Math.PI))), 3, [255, 0, 0]);
     if (input.ArrowRight) {
         segments[0].angle += 10 * Math.PI / 180;
@@ -111,7 +112,7 @@ function update() {
         arm_tip_target.x += 0.1;
     }
     // loss_gradient
-    arm_coord.ctx.fillText("loss: ".concat(current_loss_func(arm, arm_tip_target)), 10, 10);
+    arm_coord.ctx.fillText("loss: ".concat(current_loss_func(arm, arm_tip_target).toFixed(2)), 10, 10);
     var grad = loss_gradient(arm, arm_tip_target, current_loss_type);
     // add each gradient to the corresponding angle
     for (var i = 0; i < segments.length; i++) {

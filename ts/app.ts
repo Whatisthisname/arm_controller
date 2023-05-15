@@ -1,6 +1,7 @@
 const arm_canvas = document.getElementById('arm_canvas') as HTMLCanvasElement;
 const loss_canvas = document.getElementById('loss_canvas') as HTMLCanvasElement;
 const dropdown = document.getElementById('select_loss') as HTMLSelectElement;
+const toggle_level_set = document.getElementById('toggle_level_set') as HTMLInputElement;
 const map = linearColorMap([255, 0, 0], [0, 0, 255], -10, 10)
 
 
@@ -119,10 +120,11 @@ function update() {
   arm_coord.addAxes()
   loss_coord.heatmap(
     angles_2_to_loss,
-    matplotlib_cmap
+    matplotlib_cmap,
+    toggle_level_set.checked
   )
 
-  loss_coord.addAxes()
+  // loss_coord.addAxes()
 
   loss_coord.circle(new v2(mod(arm.segments[0].angle, (2 * Math.PI)), mod(arm.segments[1].angle, (2 * Math.PI))), 3, [255, 0, 0])
 
@@ -153,7 +155,7 @@ function update() {
   }
 
   // loss_gradient
-  arm_coord.ctx.fillText(`loss: ${current_loss_func(arm, arm_tip_target)}`, 10, 10)
+  arm_coord.ctx.fillText(`loss: ${current_loss_func(arm, arm_tip_target).toFixed(2)}`, 10, 10)
 
 
   const grad: number[] = loss_gradient(arm, arm_tip_target, current_loss_type)
