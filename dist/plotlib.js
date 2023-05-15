@@ -44,9 +44,13 @@ function plot2DFunctionToHeatmap(canvas, func, options) {
     var data = imageData.data;
     for (var j = 0; j < canvas.height; j++) {
         for (var i = 0; i < canvas.width; i++) {
-            var color = options.colorMap((all_data[i + j * canvas.width] - min) / span);
-            if ((all_data[i + j * canvas.width] - min) / span > 1 || (all_data[i + j * canvas.width] - min) / span < 0) {
-                console.log("error");
+            var color = [0, 0, 0];
+            var normalized_data = (all_data[i + j * canvas.width] - min) / span;
+            if (false) { // level sets
+                color = options.colorMap(0.5 * (Math.sin(normalized_data * 2 * Math.PI * 10) + 1));
+            }
+            else {
+                color = options.colorMap(normalized_data);
             }
             var index = (j * options.width_res + i) * 4;
             var r = color[0], g = color[1], b = color[2];
