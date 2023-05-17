@@ -2,31 +2,86 @@
 <html>
 
 <head>
-  <title>My TypeScript Project</title>
+    <title>My TypeScript Project</title>
 </head>
 
 <body>
-  <p>Steer target with WASD and nudge configuration with arrow keys</p>
-  <div>
-    <canvas id="arm_canvas"></canvas>
-  </div>
-  <div>
-    <canvas id="loss_canvas"></canvas>
-    <select id="select_loss">
-      <option value="L2 squared">L2 squared</option>
-      <option value="L2">L2</option>
-      <option value="L1 squared">L1 squared</option>
-      <option value="L1">L1</option>
-    </select>
-    <input type="checkbox" id="toggle_level_set">
-    <label for="toggle_level_set">level sets</label>
-  </div>
+    <div class="grid-container">
+        <div>
+            <h1>physical layout</h1>
+            <div class="item">
+                <canvas id="arm_canvas"></canvas>
+            </div>
+        </div>
+        <div class="item">
+            <div class="junction_box">
+                <div class="horizontal_layout">
+                    <p>Loss = </p>
+                    <select id="select_loss">
+                        <option value="L2 squared">L2 squared</option>
+                        <option value="L2">L2</option>
+                        <option value="L1 squared">L1 squared</option>
+                        <option value="L1">L1</option>
+                        <option value="Match_Y">Match Y</option>
+                    </select>
+                </div>
+                <p></p>
+                <div class="horizontal_layout">
+                    <input type="checkbox" id="toggle_level_set">
+                    <label for="toggle_level_set">show level sets</label>
+                </div>
+                <div class="horizontal_layout">
+                    <input type="checkbox" id="toggle_stay_in_level_set">
+                    <label for="toggle_stay_in_level_set">optimize level sets</label>
+                </div>
+                <input type="range" id="slider_level_set_offset" min="-10" max="10" step="0.1" value="0">
+                <label for="slider_level_set_offset">level set offset</label>
+                <input type="range" id="slider_level_set_scale" min="0.001" max="0.5" step="0.001" value="10">
+                <label for="slider_level_set_scale">level set scale</label>
+            </div>
+        </div>
+        <div>
+            <h1>state space</h1>
+            <div class="item" style="position: relative;">
+                <canvas id="loss_canvas" style="z-index: 0;"></canvas>
+                <!-- <h1 style="position: absolute; top: 20px; left: 20px; z-index: 1;">My Header</h1>
+                <svg style="position: absolute; z-index: 2">
+                    <line id="line" x1="0" y1="0" x2="-10" y2="10" style="stroke:rgb(255,0,0);stroke-width:2;" />
+                </svg> -->
+            </div>
+        </div>
+        <div class="item">
+            <p>Steer the arm target position (blue circle) with the WASD keys. The arm will try to follow the best it
+                can.
+            </p>
+        </div>
+        <div class="item">
 
-  <script src="./dist/utils.js"></script>
-  <script src="./dist/v2.js"></script>
-  <script src="./dist/plotlib.js"></script>
-  <script src="./dist/arm.js"></script>
-  <script src="./dist/app.js"></script>
+        </div>
+        <div class="item">Steer the arm in state space with the arrow keys. You're in a fight against the optimizer
+            though!
+        </div>
+    </div>
+
+    <div>
+
+    </div>
+    <div>
+
+
+    </div>
+
+    <script src="./dist/v2.js"></script>
+    <script src="./dist/utils.js"></script>
+    <script src="./dist/plotlib.js"></script>
+    <script src="./dist/arm.js"></script>
+    <script src="./dist/input.js"></script>
+    <script src="./dist/trail.js"></script>
+    <script src="./dist/svg.js"></script>
+    <script src="./dist/settings.js"></script>
+    <script src="./dist/app.js"></script>
+    <!-- add style.css -->
+    <link rel="stylesheet" href="./style.css">
 
 </body>
 

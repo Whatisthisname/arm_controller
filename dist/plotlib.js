@@ -22,6 +22,10 @@ function linearColorMap(startColor, endColor, startVal, endVal) {
         return lerpColor(startColor, endColor, t);
     };
 }
+//[red, green, blue]
+//[255, 0, 0]
+//[128, 50, 128]
+var matplotlib_cmap = linearColorMap([128, 50, 128], [242, 255, 0], 0, 1);
 var coordinateSystem = /** @class */ (function () {
     function coordinateSystem(canvas, xMin, xMax, yMin, yMax, resolution) {
         var _this = this;
@@ -55,9 +59,10 @@ var coordinateSystem = /** @class */ (function () {
         var yPixel = (this.yMax - y) / (this.yMax - this.yMin) * this.canvas.height;
         return [xPixel, yPixel];
     };
-    coordinateSystem.prototype.line = function (p1, p2) {
+    coordinateSystem.prototype.line = function (p1, p2, color) {
         var _a = this.point_to_pixel(p1.x, p1.y), x1 = _a[0], y1 = _a[1];
         var _b = this.point_to_pixel(p2.x, p2.y), x2 = _b[0], y2 = _b[1];
+        this.ctx.strokeStyle = "rgb(".concat(color[0], ", ").concat(color[1], ", ").concat(color[2], ")");
         this.ctx.beginPath();
         this.ctx.moveTo(x1, y1);
         this.ctx.lineTo(x2, y2);
@@ -72,8 +77,8 @@ var coordinateSystem = /** @class */ (function () {
     };
     coordinateSystem.prototype.addAxes = function () {
         var _a, _b, _c;
-        this.line(new v2(this.xMin, 0), new v2(this.xMax, 0));
-        this.line(new v2(0, this.yMin), new v2(0, this.yMax));
+        this.line(new v2(this.xMin, 0), new v2(this.xMax, 0), [0, 0, 0]);
+        this.line(new v2(0, this.yMin), new v2(0, this.yMax), [0, 0, 0]);
         (_a = this.ctx).fillText.apply(_a, __spreadArray(["0,0"], this.point_to_pixel(0, 0), false));
         (_b = this.ctx).fillText.apply(_b, __spreadArray(["x=".concat(this.xMax.toFixed(2))], this.point_to_pixel(this.xMax * 0.8, 0), false));
         (_c = this.ctx).fillText.apply(_c, __spreadArray(["y=".concat(this.yMax.toFixed(2))], this.point_to_pixel(0, this.yMax * 0.8), false));
@@ -86,7 +91,7 @@ var coordinateSystem = /** @class */ (function () {
         var y = (this.canvas.offsetTop + rect.height - mousePos.y) / this.canvas.height * yRange / this.scale + this.yMin;
         return new v2(x, y);
     };
-    coordinateSystem.prototype.heatmap = function (func, colorMap, level_set) {
+    coordinateSystem.prototype.heatmap = function (func, colorMap, level_set, level_set_scale, level_set_offset) {
         var all_data = Array(this.canvas.width * this.canvas.height * 4);
         var min = Infinity;
         var max = -Infinity;
@@ -108,11 +113,12 @@ var coordinateSystem = /** @class */ (function () {
         for (var j = 0; j < this.canvas.height; j++) {
             for (var i = 0; i < this.canvas.width; i++) {
                 var color = [0, 0, 0];
-                var normalized_data = (all_data[i + j * this.canvas.width] - min) / span;
                 if (level_set) {
-                    color = colorMap(Math.pow((0.5 * (Math.sin(normalized_data * 2 * Math.PI * 10) + 1)), 2));
+                    var level_data = all_data[i + j * this.canvas.width] * level_set_scale + level_set_offset;
+                    color = colorMap((0.5 * (Math.sin(level_data) + 1)));
                 }
                 else {
+                    var normalized_data = (all_data[i + j * this.canvas.width] - min) / span;
                     color = colorMap(normalized_data);
                 }
                 var index = (j * this.canvas.width + i) * 4;

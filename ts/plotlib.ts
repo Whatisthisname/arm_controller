@@ -28,6 +28,11 @@ type PlotOptions = {
   colorMap: (value: number) => Color;
 };
 
+//[red, green, blue]
+//[255, 0, 0]
+//[128, 50, 128]
+
+const matplotlib_cmap = linearColorMap([128, 50, 128], [242, 255, 0], 0, 1)
 
 class coordinateSystem {
   canvas: HTMLCanvasElement;
@@ -83,9 +88,10 @@ class coordinateSystem {
     return [xPixel, yPixel];
   }
 
-  line(p1: v2, p2: v2) {
+  line(p1: v2, p2: v2, color: Color) {
     const [x1, y1] = this.point_to_pixel(p1.x, p1.y);
     const [x2, y2] = this.point_to_pixel(p2.x, p2.y);
+    this.ctx.strokeStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
     this.ctx.beginPath();
     this.ctx.moveTo(x1, y1);
     this.ctx.lineTo(x2, y2);
@@ -101,8 +107,8 @@ class coordinateSystem {
   }
 
   addAxes() {
-    this.line(new v2(this.xMin, 0), new v2(this.xMax, 0));
-    this.line(new v2(0, this.yMin), new v2(0, this.yMax));
+    this.line(new v2(this.xMin, 0), new v2(this.xMax, 0), [0, 0, 0]);
+    this.line(new v2(0, this.yMin), new v2(0, this.yMax), [0, 0, 0]);
     this.ctx.fillText("0,0", ...this.point_to_pixel(0, 0));
     this.ctx.fillText(`x=${this.xMax.toFixed(2)}`, ...this.point_to_pixel(this.xMax * 0.8, 0));
     this.ctx.fillText(`y=${this.yMax.toFixed(2)}`, ...this.point_to_pixel(0, this.yMax * 0.8));
@@ -118,7 +124,7 @@ class coordinateSystem {
     return new v2(x, y);
   }
 
-  heatmap(func: (x: number, y: number) => number, colorMap: (value: number) => Color, level_set: boolean) {
+  heatmap(func: (x: number, y: number) => number, colorMap: (value: number) => Color, level_set: boolean, level_set_scale: number, level_set_offset: number) {
 
 
     const all_data = Array<number>(this.canvas.width * this.canvas.height * 4);
@@ -148,10 +154,11 @@ class coordinateSystem {
     for (let j = 0; j < this.canvas.height; j++) {
       for (let i = 0; i < this.canvas.width; i++) {
         let color = [0, 0, 0]
-        const normalized_data = (all_data[i + j * this.canvas.width] - min) / span;
         if (level_set) {
-          color = colorMap((0.5 * (Math.sin(normalized_data * 2 * Math.PI * 10) + 1))**2);
+          const level_data = all_data[i + j * this.canvas.width] * level_set_scale + level_set_offset;
+          color = colorMap((0.5 * (Math.sin(level_data) + 1)));
         } else {
+          const normalized_data = (all_data[i + j * this.canvas.width] - min) / span;
           color = colorMap(normalized_data)
         }
 

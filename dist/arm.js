@@ -5,14 +5,29 @@ var Loss;
     Loss[Loss["L2_squared"] = 1] = "L2_squared";
     Loss[Loss["L1"] = 2] = "L1";
     Loss[Loss["L1_squared"] = 3] = "L1_squared";
+    Loss[Loss["Match_Y"] = 4] = "Match_Y";
 })(Loss || (Loss = {}));
-function drawArm(cs, arm) {
+function drawArm(cs, arm, color) {
     var pos = arm.pos;
     for (var _i = 0, _a = arm.segments; _i < _a.length; _i++) {
         var segment = _a[_i];
         var tip = v2.fromPolar(segment.angle, segment.length);
-        cs.line(pos, pos.add(tip));
+        cs.line(pos, pos.add(tip), color);
         pos = pos.add(tip);
+    }
+}
+function perform_arm_gradient_step(arm, arm_tip_target, current_loss_type, step_size) {
+    for (var i = 0; i < segments.length; i++) {
+        var grad = loss_gradient(arm, arm_tip_target, current_loss_type);
+        if (toggle_stay_in_level_set.checked) {
+            for (var its = 0; its < 4; its++) {
+                var inner = level_set_scale * current_loss_func(arm, arm_tip_target) + level_set_offset;
+                segments[i].angle += Math.cos((inner)) * level_set_scale * grad[i] * step_size;
+            }
+        }
+        else {
+            segments[i].angle -= grad[i] * step_size;
+        }
     }
 }
 var Losses = /** @class */ (function () {
@@ -32,6 +47,9 @@ var Losses = /** @class */ (function () {
             case Loss.L1_squared:
                 return Losses.L1_squared;
                 break;
+            case Loss.Match_Y:
+                return Losses.Line;
+                break;
         }
     };
     Losses.get_loss_gradient = function (loss) {
@@ -47,6 +65,9 @@ var Losses = /** @class */ (function () {
                 break;
             case Loss.L1_squared:
                 return Losses.L1_squared_gradient;
+                break;
+            case Loss.Match_Y:
+                return Losses.Line_gradient;
                 break;
         }
     };
@@ -93,6 +114,15 @@ var Losses = /** @class */ (function () {
         dLoss_dtip.y = tip.y > target.y ? 2 : -2;
         dLoss_dtip.x *= Math.abs(tip.x - target.x);
         dLoss_dtip.y *= Math.abs(tip.y - target.y);
+        return dLoss_dtip;
+    };
+    Losses.Line = function (arm, target) {
+        var tip_pos = get_arm_tip_pos(arm);
+        return Math.abs(tip_pos.y - 5);
+    };
+    Losses.Line_gradient = function (tip, target) {
+        var dLoss_dtip = v2.zero();
+        dLoss_dtip.y = tip.y > target.y ? 1 : -1;
         return dLoss_dtip;
     };
     return Losses;
