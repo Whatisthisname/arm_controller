@@ -77,15 +77,12 @@
         </div>
         
         <div class="item">
-            <p>Steer the arm target position (blue circle) with the WASD keys. The arm will try to follow the best
-                it
-                can.
+            <p>Steer the arm target position (purple circle) with the WASD keys. The arm will try to let its tip follow the it through minimization of the loss function with gradient descent. How the error between tip position and target is calculated can be selected on the right.
             </p>
         </div>
         <div class="item">
             <p>
-                Steer the arm in state space with the arrow keys. You're in a fight against the optimizer
-                though! </p>
+                Nudge the arm in state space to solutions of approximate equal cost with the arrow keys. Tick "minimize level sets" to explore not just the class of best solutions, but sets of solutions of any quality. With this selected, the L2 (squared) loss this lets the tip of the arm trace circles of varying radius around the target. With the L1 loss (manhattan distance) it traces a square balanced on its tip. </p>
             </div>
             <div class="item">
     
