@@ -2,19 +2,37 @@
 <html>
 
 <head>
-    <title>My TypeScript Project</title>
+    <title>N-Segment Robot Arm State Space Exploration</title>
 </head>
 
 <body>
     <div class="grid-container">
-        <div>
+        <div class="item">
             <h1>physical layout</h1>
+        </div>
+        <div class="item">
+            <h1>state space</h1>
+        </div>
+        <div class="invis_item">
+
+        </div>
+        <div>
             <div class="item">
                 <canvas id="arm_canvas"></canvas>
             </div>
         </div>
+        <div>
+            <div class="item" style="position: relative;">
+                <canvas id="loss_heatmap_canvas"></canvas>
+                <canvas id="loss_highres_canvas"></canvas>
+            </div>
+        </div>
         <div class="item">
-            <div class="junction_box">
+            <div>
+                <p>segment amount
+                    <input type="number" id="arm_amount" value="2" min="2" step="1"
+                        onwheel="parseInt(this.value) + (event.deltaY > 0 ? 1 : -1)">
+                </p>
                 <div class="horizontal_layout">
                     <p>Loss = </p>
                     <select id="select_loss">
@@ -22,54 +40,67 @@
                         <option value="L2">L2</option>
                         <option value="L1 squared">L1 squared</option>
                         <option value="L1">L1</option>
-                        <option value="Match_Y">Match Y</option>
+                        <option value="Match Y">Match height</option>
                     </select>
                 </div>
                 <p></p>
-                <div class="horizontal_layout">
-                    <input type="checkbox" id="toggle_level_set">
-                    <label for="toggle_level_set">show level sets</label>
+
+                <div class="junction_box">
+                    <div class="horizontal_layout">
+                        <input type="checkbox" id="toggle_level_set">
+                        <label for="toggle_level_set">minimize level sets</label>
+                    </div>
+
+                    <input type="range" id="slider_level_set_scale" min="0.001" max="0.5" step="0.001" value="0.25">
+                    <label for="slider_level_set_scale">level set density</label>
+                    <div class="horizontal_layout">
+                        <label for="number_level_set_offset">level set browser</label>
+                        <input type="number" id="number_level_set_offset" value="0"
+                            onwheel="parseInt(this.value) + 0.5*(event.deltaY > 0 ? 1 : -1)">
+                    </div>
                 </div>
-                <div class="horizontal_layout">
-                    <input type="checkbox" id="toggle_stay_in_level_set">
-                    <label for="toggle_stay_in_level_set">optimize level sets</label>
+                <p></p>
+                <div class="junction_box">
+                    <div>
+                        <p>segment on horizontal axis index
+                            <input type="number" id="x_axis_index" value="0" min="0" step="1" max="0"
+                                onwheel="parseInt(this.value) + (event.deltaY > 0 ? 1 : -1)">
+                        </p>
+                        <p>segment on vertical axis index
+                            <input type="number" id="y_axis_index" value="1" min="1" step="1" max="1"
+                                onwheel="parseInt(this.value) + (event.deltaY > 0 ? 1 : -1)">
+                        </p>
+                    </div>
+                    <p></p>
                 </div>
-                <input type="range" id="slider_level_set_offset" min="-10" max="10" step="0.1" value="0">
-                <label for="slider_level_set_offset">level set offset</label>
-                <input type="range" id="slider_level_set_scale" min="0.001" max="0.5" step="0.001" value="10">
-                <label for="slider_level_set_scale">level set scale</label>
             </div>
         </div>
-        <div>
-            <h1>state space</h1>
-            <div class="item" style="position: relative;">
-                <canvas id="loss_canvas" style="z-index: 0;"></canvas>
-                <!-- <h1 style="position: absolute; top: 20px; left: 20px; z-index: 1;">My Header</h1>
-                <svg style="position: absolute; z-index: 2">
-                    <line id="line" x1="0" y1="0" x2="-10" y2="10" style="stroke:rgb(255,0,0);stroke-width:2;" />
-                </svg> -->
-            </div>
-        </div>
+        
         <div class="item">
-            <p>Steer the arm target position (blue circle) with the WASD keys. The arm will try to follow the best it
+            <p>Steer the arm target position (blue circle) with the WASD keys. The arm will try to follow the best
+                it
                 can.
             </p>
         </div>
         <div class="item">
-
-        </div>
-        <div class="item">Steer the arm in state space with the arrow keys. You're in a fight against the optimizer
-            though!
-        </div>
+            <p>
+                Steer the arm in state space with the arrow keys. You're in a fight against the optimizer
+                though! </p>
+            </div>
+            <div class="item">
+    
+            </div>
     </div>
 
+    <div id="credits">
+        <a href="https://hojmax.github.io/Inverse-Kinematics/">inspired by a Hojmax project</a>
+    </div>
     <div>
 
-    </div>
-    <div>
-
 
     </div>
+    <!-- add style.css -->
+    <link rel="stylesheet" href="./style.css">
 
     <script src="./dist/v2.js"></script>
     <script src="./dist/utils.js"></script>
@@ -80,8 +111,6 @@
     <script src="./dist/svg.js"></script>
     <script src="./dist/settings.js"></script>
     <script src="./dist/app.js"></script>
-    <!-- add style.css -->
-    <link rel="stylesheet" href="./style.css">
 
 </body>
 

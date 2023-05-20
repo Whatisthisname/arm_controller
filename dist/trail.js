@@ -1,19 +1,37 @@
 "use strict";
-var arm_tip_trace = [];
-var arm_tip_trace_max_points = 15;
-var arm_tip_trace_min_dist = 0.5;
-function update_trail(pos) {
-    if (arm_tip_trace.length > arm_tip_trace_max_points) {
-        arm_tip_trace.shift();
+var Trail = /** @class */ (function () {
+    function Trail(max_points, min_dist, max_dist) {
+        this.points = [];
+        this.max_points = max_points;
+        this.min_dist = min_dist;
+        this.max_dist = max_dist;
     }
-    if (arm_tip_trace.length == 0 || v2.distance(arm_tip_trace[arm_tip_trace.length - 1], pos) > arm_tip_trace_min_dist) {
-        arm_tip_trace.push(pos);
-    }
-}
-function draw_trail() {
-    for (var i = 0; i < arm_tip_trace.length - 1; i++) {
-        var element = arm_tip_trace[i];
-        var element2 = arm_tip_trace[i + 1];
-        arm_coord.line(element, element2, [242, 255, 0]);
-    }
-}
+    Trail.prototype.update = function (pos) {
+        if (this.points.length > this.max_points) {
+            this.points.shift();
+        }
+        if (this.points.length == 0) {
+            this.points.push([pos, true]);
+            return true;
+        }
+        else {
+            var dist = v2.distance(this.points[this.points.length - 1][0], pos);
+            if (dist > this.min_dist) {
+                this.points.push([pos, dist < this.max_dist]);
+                return true;
+            }
+        }
+        return false;
+    };
+    Trail.prototype.draw = function (coord, color) {
+        for (var i = 0; i < this.points.length - 1; i++) {
+            if (!this.points[i + 1][1]) {
+                continue;
+            }
+            var element = this.points[i][0];
+            var element2 = this.points[i + 1][0];
+            coord.line(element, element2, color);
+        }
+    };
+    return Trail;
+}());

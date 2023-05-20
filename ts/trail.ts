@@ -1,20 +1,42 @@
-const arm_tip_trace: v2[] = []
-const arm_tip_trace_max_points = 15
-const arm_tip_trace_min_dist = 0.5
+class Trail {
 
-function update_trail(pos : v2) {
-  if (arm_tip_trace.length > arm_tip_trace_max_points) {
-    arm_tip_trace.shift()
-  }
-  if (arm_tip_trace.length == 0 || v2.distance(arm_tip_trace[arm_tip_trace.length - 1], pos) > arm_tip_trace_min_dist) {
-    arm_tip_trace.push(pos)
-  }
-}
+  points: [v2, boolean][]
+  max_points: number
+  min_dist: number
+  max_dist: number
 
-function draw_trail() {
-  for (let i = 0; i < arm_tip_trace.length - 1; i++) {
-    const element = arm_tip_trace[i];
-    const element2 = arm_tip_trace[i + 1];
-    arm_coord.line(element, element2, [242, 255, 0])
+  constructor(max_points: number, min_dist: number, max_dist: number) {
+    this.points = []
+    this.max_points = max_points
+    this.min_dist = min_dist
+    this.max_dist = max_dist
+  }
+
+  update(pos: v2) : boolean {
+    if (this.points.length > this.max_points) {
+      this.points.shift()
+    }
+    if (this.points.length == 0) {
+      this.points.push([pos, true])
+      return true
+    } else {
+      const dist = v2.distance(this.points[this.points.length - 1][0], pos)
+      if (dist > this.min_dist) {
+        this.points.push([pos, dist < this.max_dist])
+        return true
+      }
+    }
+    return false
+  }
+
+  draw(coord: coordinateSystem, color: Color) {
+    for (let i = 0; i < this.points.length - 1; i++) {
+      if (!this.points[i+1][1] ) {
+        continue
+      }
+      const element = this.points[i][0];
+      const element2 = this.points[i + 1][0];
+      coord.line(element, element2, color)
+    }
   }
 }

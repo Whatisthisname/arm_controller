@@ -7,6 +7,13 @@ var Loss;
     Loss[Loss["L1_squared"] = 3] = "L1_squared";
     Loss[Loss["Match_Y"] = 4] = "Match_Y";
 })(Loss || (Loss = {}));
+var arm = { segments: [], pos: v2.zero() };
+function makeArm(amount) {
+    arm.segments = [];
+    for (var i = 0; i < amount; i++) {
+        arm.segments.push({ angle: 0, length: 10 / amount });
+    }
+}
 function drawArm(cs, arm, color) {
     var pos = arm.pos;
     for (var _i = 0, _a = arm.segments; _i < _a.length; _i++) {
@@ -17,16 +24,16 @@ function drawArm(cs, arm, color) {
     }
 }
 function perform_arm_gradient_step(arm, arm_tip_target, current_loss_type, step_size) {
-    for (var i = 0; i < segments.length; i++) {
+    for (var i = 0; i < arm.segments.length; i++) {
         var grad = loss_gradient(arm, arm_tip_target, current_loss_type);
-        if (toggle_stay_in_level_set.checked) {
+        if (toggle_level_set.checked) {
             for (var its = 0; its < 4; its++) {
                 var inner = level_set_scale * current_loss_func(arm, arm_tip_target) + level_set_offset;
-                segments[i].angle += Math.cos((inner)) * level_set_scale * grad[i] * step_size;
+                arm.segments[i].angle -= Math.cos((inner)) * level_set_scale * grad[i] * step_size;
             }
         }
         else {
-            segments[i].angle -= grad[i] * step_size;
+            arm.segments[i].angle -= grad[i] * step_size;
         }
     }
 }
@@ -118,11 +125,11 @@ var Losses = /** @class */ (function () {
     };
     Losses.Line = function (arm, target) {
         var tip_pos = get_arm_tip_pos(arm);
-        return Math.abs(tip_pos.y - 5);
+        return Math.pow((tip_pos.y - target.y), 2);
     };
     Losses.Line_gradient = function (tip, target) {
         var dLoss_dtip = v2.zero();
-        dLoss_dtip.y = tip.y > target.y ? 1 : -1;
+        dLoss_dtip.y = 2 * (tip.y - target.y);
         return dLoss_dtip;
     };
     return Losses;

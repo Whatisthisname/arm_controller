@@ -1,28 +1,43 @@
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 10px;
+    grid-template-columns: 2fr 2fr 1fr;
+    grid-gap: 25px;
     margin: 0 auto;
-    max-width: 50%;
+    max-width: 75%;
 }
 
 .item {
-    background-color: #f2f2f2;
-    padding: 10px;
-    /* margin: 0 auto; */
+    /* background-color: #f2f2f2; */
+    display: flex;
+    padding: 0px;
+    align-items: center;
+    justify-content: center;
+}
+
+.invis_item {
+    padding: 0px;
 }
 
 h1 {
     text-align: center;
 }
+p {
+    text-align: center;
+    margin: 5px;
+}
 
 .junction_box {
     background-color: #d9ffae;
-    display: flex;
+    bottom : 0;
+    /* display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    margin: 10px auto;
+    align-items: center; */
+    /* margin: 10px auto; */
+}
+
+canvas  {
+    align-self: center;
 }
 
 .horizontal_layout {
@@ -31,4 +46,15 @@ h1 {
     justify-content: center;
     align-items: center;
     margin: 0 auto;
+}
+
+
+input[type=number] {
+    width: 25px;
+}
+
+#credits {
+    position: absolute;
+    bottom: 20px;
+    right: 50%;
 }
