@@ -6,12 +6,17 @@
 </head>
 
 <body>
+    <select id="rrt_mode">
+        <option value="RRT">RRT</option>
+        <option value="Gradient">Gradient</option>
+    </select>
+
     <div class="grid-container">
         <div class="item">
             <h1>physical layout</h1>
         </div>
         <div class="item">
-            <h1>state space</h1>
+            <h1>configuration space</h1>
         </div>
         <div class="invis_item">
 
@@ -75,18 +80,23 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="item">
-            <p>Steer the arm target position (purple circle) with the WASD keys. The arm will try to let its tip follow the it through minimization of the loss function with gradient descent. How the error between tip position and target is calculated can be selected on the right.
+            <p>Steer the arm target position (purple circle) with the WASD keys. The arm will try to let its tip follow
+                the it through minimization of the loss function with gradient descent. How the error between tip
+                position and target is calculated can be selected on the right.
             </p>
         </div>
         <div class="item">
             <p>
-                Nudge the arm in state space to solutions of approximate equal cost with the arrow keys. Tick "minimize level sets" to explore not just the class of best solutions, but sets of solutions of any quality. With this selected, the L2 (squared) loss this lets the tip of the arm trace circles of varying radius around the target. With the L1 loss (manhattan distance) it traces a square balanced on its tip. </p>
-            </div>
-            <div class="item">
-    
-            </div>
+                Nudge the arm in state space to solutions of approximate equal cost with the arrow keys. Tick "minimize
+                level sets" to explore not just the class of best solutions, but sets of solutions of any quality. With
+                this selected, the L2 (squared) loss this lets the tip of the arm trace circles of varying radius around
+                the target. With the L1 loss (manhattan distance) it traces a square balanced on its tip. </p>
+        </div>
+        <div class="item">
+
+        </div>
     </div>
 
     <div id="credits">
@@ -99,7 +109,7 @@
     <!-- add style.css -->
     <link rel="stylesheet" href="./style.css">
 
-    <script src="./dist/v2.js"></script>
+    <!-- <script src="./dist/v2.js"></script>
     <script src="./dist/utils.js"></script>
     <script src="./dist/plotlib.js"></script>
     <script src="./dist/arm.js"></script>
@@ -107,7 +117,10 @@
     <script src="./dist/trail.js"></script>
     <script src="./dist/svg.js"></script>
     <script src="./dist/settings.js"></script>
-    <script src="./dist/app.js"></script>
+    <script src="./dist/app.js"></script> -->
+
+    <script src="dist/bundle.js"></script>
+    <!-- <script src="dist/bundle.js.map.json"></script> Include the source map file -->
 
 </body>
 
